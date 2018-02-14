@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <title>Chat realtime</title>
+</head>
+<body ng-app="app">
+        <nav class="navbar fixed-top navbar-light bg-dark">
+                <ul class="nav nav-pills float-right">
+                          <li class="nav-item">
+                            <a class="nav-link " href="index.html">Home </a>
+                          </li>
+                          <li class="nav-item">
+                            <a class="nav-link active" href="#">ROV </a>
+                          </li>
+                         
+                        </ul>
+        </nav>
+        <div class="container" ng-controller="chatCrtl" >
+        
+        
+        <ul  class="list-group">
+            <li class="list-group-item list-group-item-action" ng-repeat="data in messages">{{ data.text }}</li>
+         </ul>
+       <br>
+       
+       <div class="form-group">
+       <form>
+            <input  class="form-control" type="text" ng-model="message"><br>
+            <center>
+            <button class="btn btn-primary" ng-click="addMessage(message)">ส่งข้อความ</button>
+             </center>
+       </form>
+    </div>
+
+    </div>
+
+
+
+    <script src="node_modules/angular/angular.min.js"></script>
+        
+    
+<script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyD3Kv61fEDHAgwhLnR0S5pMMN4KHt1YvvU",
+    authDomain: "rovs-ae460.firebaseapp.com",
+    databaseURL: "https://rovs-ae460.firebaseio.com",
+    projectId: "rovs-ae460",
+    storageBucket: "",
+    messagingSenderId: "817204044417"
+  };
+  firebase.initializeApp(config);
+</script>
+
+    <script>
+
+
+        const app = angular.module('app',[]) 
+        
+        app.controller('chatCrtl', ['$scope', function ($scope){
+            const rovs = firebase.database().ref('rovs')
+
+             $scope.addMessage = function (data) {
+                 rovs.push({
+                    text: data
+
+                })
+                $scope.message = ''
+                }
+
+            rovs.on('value', function (snapshots){
+                    $scope.messages = []
+                    snapshots.forEach(function(snap){
+                        console.log(snap.val())
+                        $scope.messages.push(snap.val())
+                    })
+                    $scope.$evalAsync();
+                    
+                })
+        }])
+    
+    </script>
+
+
+</body>
+</html>
